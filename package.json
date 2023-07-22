@@ -1,0 +1,32 @@
+{
+	"private": true,
+	"name": "stend-api",
+	"version": "1.0.0",
+	"description": "Télécharger et envoyer des fichiers via Stend",
+	"main": "index.js",
+	"scripts": {
+		"start": "node index.js",
+		"dev": "nodemon index.js"
+	},
+	"author": "JohanStickman",
+	"license": "MIT",
+	"dependencies": {
+		"@autheur/generator": "^1.2.0",
+		"@fastify/cors": "^8.3.0",
+		"@fastify/formbody": "^7.4.0",
+		"@fastify/multipart": "^7.7.0",
+		"check-disk-space": "^3.4.0",
+		"dotenv": "^16.0.3",
+		"fastify": "^4.15.0",
+		"pump": "^3.0.0",
+		"simple-json-db": "^2.0.0"
+	},
+	"devDependencies": {
+		"nodemon": "^2.0.13"
+	},
+	"nodemonConfig": {
+		"ignore": [
+			"storage/*"
+		]
+	}
+}
