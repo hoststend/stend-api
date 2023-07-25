@@ -3,3 +3,5 @@ pnpm-lock.yaml
 pacage-lock.json
 node_modules
 .vercel
+storage
+test.js
