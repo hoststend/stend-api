@@ -17,6 +17,7 @@ var fileMaxSize = parseInt(process.env.FILE_MAX_SIZE || 1000000000) // 1 Go
 var chunkSize = parseInt(process.env.CHUNK_SIZE || 10000000) // 10 Mo
 var apiPassword = process.env.API_PASSWORD || null // Mot de passe pour accéder à l'API
 var apiVersion = require('./package.json').version || '0.0.0' // Version de l'API
+var fileMaxAge = process.env.FILE_MAX_AGE || 2592000 // 30 jours
 
 // Créer les éléments de stockage s'ils n'existent pas
 if(!fs.existsSync(storagePath)) fs.mkdirSync(storagePath)
@@ -81,7 +82,7 @@ function generateCode(length){
 function generateDictionaryKey(){
 	// On génère la clé
 	var key = generate([determinant(),noun()])
-    key = key.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+	key = key.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
 	// On vérifie que la clé n'existe pas déjà
 	if(database.has(key)) return generateDictionaryKey()
@@ -171,7 +172,7 @@ setInterval(deleteExpiredTransfers, 60000) // On vérifie toutes les minutes
 
 // Rediriger vers la documentation
 fastify.get('/', async (req, res) => {
-	return res.redirect("https://stend-docs.johanstick.me")
+	return res.redirect("https://stend-docs.vercel.app") // au cas où mon domaine expire 🤷
 })
 
 // Obtenir les informations de l'instance
@@ -180,7 +181,22 @@ fastify.get('/instance', async (req, res) => {
 		fileMaxSize: fileMaxSize,
 		chunkSize: chunkSize,
 		requirePassword: apiPassword ? true : false,
-		apiVersion: apiVersion
+		apiVersion: apiVersion,
+		fileMaxAge: fileMaxAge,
+		recommendedExpireTimes: [
+			{ label: '30 minutes', value: 1800 },
+			{ label: '6 heures', value: 21600 },
+			{ label: '12 heures', value: 43200 },
+			{ label: '1 jour', value: 86400 },
+			{ label: '4 jours', value: 259200 },
+			{ label: '1 semaine', value: 604800 },
+			{ label: '2 semaines', value: 1209600 },
+			{ label: '1 mois', value: 2592000 },
+			{ label: '3 mois', value: 7776000 },
+			{ label: '6 mois', value: 15552000 },
+			{ label: '1 an', value: 31104000 },
+			{ label: '3 ans', value: 93312000 },
+		].filter(time => time.value <= fileMaxAge)
 	}
 })
 
@@ -229,7 +245,7 @@ fastify.post('/files/create', async (req, res) => {
 	if(!expireTime) throw { statusCode: 400, error: "Temps avant expiration manquant", message: "Vous devez entrer la valeur 'expiretime' dans le body" }
 	expireTime = parseInt(expireTime)
 	if(isNaN(expireTime)) throw { statusCode: 400, error: "Temps avant expiration invalide", message: "Le temps avant expiration doit être un nombre" }
-	if(expireTime > 2592000) throw { statusCode: 400, error: "Temps avant expiration trop long", message: "Le temps avant expiration doit être inférieur à 30 jours" }
+	if(expireTime > fileMaxAge) throw { statusCode: 400, error: "Temps avant expiration trop long", message: `Le temps avant expiration doit être inférieur à ${fileMaxAge} secondes` }
 
 	// Vérifier le stockage disponible là où on veut stocker le fichier
 	if(!fileSize) throw { statusCode: 400, error: "Taille du fichier manquante", message: "Vous devez entrer la valeur 'filesize' dans le body" }
