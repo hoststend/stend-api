@@ -184,20 +184,20 @@ fastify.get('/instance', async (req, res) => {
 		apiVersion: apiVersion,
 		fileMaxAge: fileMaxAge,
 		recommendedExpireTimes: [ // chaque valeur est en secondes
-			{ label: '30 minutes', value: 1800 },
-			{ label: '6 heures', value: 21600 },
-			{ label: '12 heures', value: 43200 },
-			{ label: '1 jour', value: 86400 },
-			{ label: '4 jours', value: 345600 },
-			{ label: '1 semaine', value: 604800 },
-			{ label: '2 semaines', value: 1209600 },
-			{ label: '1 mois', value: 2592000 },
-			{ label: '3 mois', value: 7776000 },
-			{ label: '6 mois', value: 15552000 },
-			{ label: '1 an', value: 31104000 },
-			{ label: '3 ans', value: 93312000 },
-			{ label: '10 ans', value: 311040000 },
-		].filter(time => time.value <= fileMaxAge)
+			{ label: '30 minutes', inSeconds: 1800 },
+			{ label: '6 heures', inSeconds: 21600 },
+			{ label: '12 heures', inSeconds: 43200 },
+			{ label: '1 jour', inSeconds: 86400 },
+			{ label: '4 jours', inSeconds: 345600 },
+			{ label: '1 semaine', inSeconds: 604800 },
+			{ label: '2 semaines', inSeconds: 1209600 },
+			{ label: '1 mois', inSeconds: 2592000 },
+			{ label: '3 mois', inSeconds: 7776000 },
+			{ label: '6 mois', inSeconds: 15552000 },
+			{ label: '1 an', inSeconds: 31104000 },
+			{ label: '3 ans', inSeconds: 93312000 },
+			{ label: '10 ans', inSeconds: 311040000 },
+		].filter(time => time.inSeconds <= fileMaxAge).map(time => ({ label: time.label, inSeconds: time.inSeconds, value: Math.floor(time.inSeconds / 60) }))
 	}
 })
 
