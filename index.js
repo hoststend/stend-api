@@ -183,19 +183,20 @@ fastify.get('/instance', async (req, res) => {
 		requirePassword: apiPassword ? true : false,
 		apiVersion: apiVersion,
 		fileMaxAge: fileMaxAge,
-		recommendedExpireTimes: [
-			{ label: '30 minutes', value: 30 },
-			{ label: '6 heures', value: 360 },
-			{ label: '12 heures', value: 720 },
-			{ label: '1 jour', value: 1440 },
-			{ label: '4 jours', value: 5760 },
-			{ label: '1 semaine', value: 10080 },
-			{ label: '2 semaines', value: 20160 },
-			{ label: '1 mois', value: 43200 },
-			{ label: '3 mois', value: 129600 },
-			{ label: '6 mois', value: 259200 },
-			{ label: '1 an', value: 518400 },
-			{ label: '3 ans', value: 1555200 },
+		recommendedExpireTimes: [ // chaque valeur est en secondes
+			{ label: '30 minutes', value: 1800 },
+			{ label: '6 heures', value: 21600 },
+			{ label: '12 heures', value: 43200 },
+			{ label: '1 jour', value: 86400 },
+			{ label: '4 jours', value: 345600 },
+			{ label: '1 semaine', value: 604800 },
+			{ label: '2 semaines', value: 1209600 },
+			{ label: '1 mois', value: 2592000 },
+			{ label: '3 mois', value: 7776000 },
+			{ label: '6 mois', value: 15552000 },
+			{ label: '1 an', value: 31104000 },
+			{ label: '3 ans', value: 93312000 },
+			{ label: '10 ans', value: 311040000 },
 		].filter(time => time.value <= fileMaxAge)
 	}
 })
