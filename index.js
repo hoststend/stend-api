@@ -8,7 +8,6 @@ const fs = require('fs')
 const path = require('path')
 const pump = require('pump')
 const JSONdb = require('simple-json-db')
-const { generate, noun, determinant } = require("@autheur/generator")
 require('dotenv').config()
 
 // Importer quelques éléments depuis les variables d'environnement
@@ -28,17 +27,18 @@ var downloadTokens = [] // Liste des tokens de téléchargement
 
 // Liste de tout les caractères qu'on utilisera pour générer le code, ainsi que les caractères qui les entourent
 const alphabet = [
-	{ char: 'a', surrounding: ['z', 'q'] }, { char: 'b', surrounding: ['v', 'n', 'g'] }, { char: 'c', surrounding: ['d', 'v'] },
-	{ char: 'd', surrounding: ['s', 'e', 'f', 'c'] }, { char: 'e', surrounding: ['z', 'r', 'd'] }, { char: 'f', surrounding: ['d', 'r', 'v', 'g'] },
-	{ char: 'g', surrounding: ['f', 't', 'v', 'h'] }, { char: 'h', surrounding: ['g', 'y', 'b'] }, { char: 'i', surrounding: ['u', 'k', 'o'] },
-	{ char: 'k', surrounding: ['i', 'l'] }, { char: 'l', surrounding: ['k', 'o'] }, { char: 'n', surrounding: ['b', 'h'] },
-	{ char: 'o', surrounding: ['i', 'l'] }, { char: 'q', surrounding: ['a', 's'] }, { char: 'r', surrounding: ['e', 't', 'f'] },
-	{ char: 's', surrounding: ['z', 'q', 'd'] }, { char: 't', surrounding: ['r', 'y', 'g'] }, { char: 'u', surrounding: ['y', 'i'] },
-	{ char: 'v', surrounding: ['c', 'f', 'b'] }, { char: 'y', surrounding: ['t', 'u', 'h'] },
-	{ char: 'z', surrounding: ['a', 's', 'e'] }, { char: '1', surrounding: ['2'] }, { char: '2', surrounding: ['1','3'] },
+	{ char: 'a', surrounding: ['z', 'q'] }, { char: 'b', surrounding: ['v', 'n'] }, { char: 'c', surrounding: ['v', 'd'] },
+	{ char: 'd', surrounding: ['s', 'e', 'f', 'c'] }, { char: 'e', surrounding: ['z', 'r'] }, { char: 'f', surrounding: ['d', 'r', 'g'] },
+	{ char: 'g', surrounding: ['f', 'h'] }, { char: 'h', surrounding: ['g', 'y'] }, { char: 'i', surrounding: ['u', 'o'] },
+	{ char: 'k', surrounding: ['l', 'i'] }, { char: 'l', surrounding: ['k', 'o'] }, { char: 'n', surrounding: ['b', 'h'] },
+	{ char: 'o', surrounding: ['i', 'l'] }, { char: 'q', surrounding: ['a', 's'] }, { char: 'r', surrounding: ['e', 't'] },
+	{ char: 's', surrounding: ['q', 'd'] }, { char: 't', surrounding: ['r', 'y'] }, { char: 'u', surrounding: ['y', 'i'] },
+	{ char: 'v', surrounding: ['c', 'b'] }, { char: 'y', surrounding: ['t', 'u'] },
+	{ char: 'z', surrounding: ['a', 'e'] } // IMPORTANT: toujours garder au moins 2 éléments uniques dans surrounding
+	/*, { char: '1', surrounding: ['2'] }, { char: '2', surrounding: ['1','3'] },
 	{ char: '3', surrounding: ['2','4'] }, { char: '4', surrounding: ['3','5'] }, { char: '5', surrounding: ['4','6'] },
 	{ char: '6', surrounding: ['5','7'] }, { char: '7', surrounding: ['6','8'] }, { char: '8', surrounding: ['7','9'] },
-	{ char: '9', surrounding: ['8','0'] }, { char: '0', surrounding: ['9'] }, // j'ai tenté de rendre le code plus propre ptdrr
+	{ char: '9', surrounding: ['8','0'] }, { char: '0', surrounding: ['9'] },*/ // j'ai tenté de rendre le code plus propre ptdrr
 ]
 
 // Fonction qui génère un code aléatoire
@@ -46,8 +46,8 @@ function generateCode(length){
 	// Générer tout les caractères
 	var code = ''
 	for(var i = 0; i < length; i++){
-		// On a deux chance sur trois de ne pas ajouter un caractère entouré, ou alors si on a pas encore de caractère
-		if(!code.length || Math.random() < 0.66){
+		// Si on a pas de caractère, on en génère un aléatoire
+		if(code.length < 1){
 			code += alphabet[Math.floor(Math.random() * alphabet.length)].char
 			continue
 		} else {
@@ -57,9 +57,16 @@ function generateCode(length){
 			var surrounding = alphabet[lastCharIndex].surrounding
 			var char = surrounding[Math.floor(Math.random() * surrounding.length)]
 
-			// On empêche que le caractère soit le même que le précédent
-			if(char === lastChar) char = surrounding[Math.floor(Math.random() * surrounding.length)]
+			// On évite que le caractère soit le même que le précédent
+			while(char === lastChar) char = surrounding[Math.floor(Math.random() * surrounding.length)] // si le caractère est le même, on en génère un autre
 
+			// On évite à moitié que le caractère soit le même que l'avant dernier
+			if(code.length > 1){
+				var beforeLastChar = code[code.length - 2]
+				if(char === beforeLastChar) char = surrounding[Math.floor(Math.random() * surrounding.length)]
+			}
+
+			// On ajoute le caractère au code
 			code += char
 		}
 	}
@@ -78,22 +85,13 @@ function generateCode(length){
 	return code
 }
 
-// Fonction pour générer une clé à partir des mots du dictionnaire
-function generateDictionaryKey(){
-	// On génère la clé
-	var key = generate([determinant(),noun()])
-	key = key.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-
-	// On vérifie que la clé n'existe pas déjà
-	if(database.has(key)) return generateDictionaryKey()
-	else return key // Sinon, on retourne la clé
-}
-
 // Fonction pour générer une clé de partage
 function generateShareKey(i=0){
 	// On génère un code
-	if(i < 10) var code = generateDictionaryKey()
-	else var code = generateCode(10)
+	if(i < 10) var code = generateCode(8)
+	else if(i < 20) var code = generateCode(12)
+	else if(i < 30) var code = generateCode(24)
+	else var code = generateCode(36) // juste pour être sûr
 
 	// On vérifie que la clé n'existe pas déjà
 	if(database.has(code)) return generateShareKey(i++)
@@ -137,6 +135,9 @@ async function deleteExpiredTransfers(){
 	var transfers = fs.readdirSync(storagePath)
 	console.log(`Checking for ${transfers.length-1} transfers...`) // on enlève 1 car il y a le fichier db.json
 
+	// On récupère également la db
+	var dbJson = database.JSON()
+
 	// On parcourt tout les transferts
 	for(var i = 0; i < transfers.length; i++){
 		var transfer = transfers[i]
@@ -146,11 +147,24 @@ async function deleteExpiredTransfers(){
 		if(!fs.lstatSync(transferPath).isDirectory()) continue
 
 		// On lit les informations du transfert
-		var file = JSON.parse(fs.readFileSync(path.join(transferPath, 'file.json'), 'utf8'))
-		console.log(`Checking transfer (shareKey: ${file.shareKey}): uploaded: ${file.uploaded} | creation: ${file.created} | expire: ${file.expireDate} | now: ${Date.now()}`)
+		var file
+		try {
+			file = JSON.parse(fs.readFileSync(path.join(transferPath, 'file.json'), 'utf8'))
+		} catch(e) { file = null }
+		console.log(`Checking transfer (shareKey: ${file?.shareKey}, transferKey: ${transfer}): uploaded: ${file?.uploaded} | creation: ${file?.created} | expire: ${file?.expireDate} | now: ${Date.now()}`)
+
+		// Si le fichier n'existe pas, on supprime le transfert (c'est pas normal mais on sait jamais)
+		if(!file){
+			try {
+				console.log(`Deleting transfer (shareKey: ${file?.shareKey}, transferKey: ${transfer}) because it is invalid: missing file.json`)
+				fs.rmSync(transferPath, { recursive: true })
+				var sharekey = Object.entries(dbJson).find(([key, value]) => value.transferKey === transfer)?.[0]
+				if(sharekey) database.delete(sharekey)
+			} catch(e) { console.error(e) }
+		}
 
 		// Si le transfert n'est pas uploadé, on vérifie s'il est plus vieux que 5 heures
-		if(!file.uploaded && Date.now() - file.created > 18000000){
+		else if(!file.uploaded && Date.now() - file.created > 18000000){
 			try { // Si oui, on supprime le dossier
 				console.log(`Deleting transfer (shareKey: ${file.shareKey})`)
 				fs.rmSync(transferPath, { recursive: true })
@@ -159,7 +173,7 @@ async function deleteExpiredTransfers(){
 		}
 
 		// Si le transfert est uploadé, on vérifie s'il est plus vieux que le temps d'expiration
-		if(file.uploaded && Date.now() > file.expireDate){
+		else if(file.uploaded && Date.now() > file.expireDate){
 			try { // Si oui, on supprime le dossier
 				console.log(`Deleting transfer (shareKey: ${file.shareKey})`)
 				fs.rmSync(transferPath, { recursive: true })
@@ -183,20 +197,21 @@ fastify.get('/instance', async (req, res) => {
 		requirePassword: apiPassword ? true : false,
 		apiVersion: apiVersion,
 		fileMaxAge: fileMaxAge,
-		recommendedExpireTimes: [
-			{ label: '30 minutes', value: 30 },
-			{ label: '6 heures', value: 360 },
-			{ label: '12 heures', value: 720 },
-			{ label: '1 jour', value: 1440 },
-			{ label: '4 jours', value: 5760 },
-			{ label: '1 semaine', value: 10080 },
-			{ label: '2 semaines', value: 20160 },
-			{ label: '1 mois', value: 43200 },
-			{ label: '3 mois', value: 129600 },
-			{ label: '6 mois', value: 259200 },
-			{ label: '1 an', value: 518400 },
-			{ label: '3 ans', value: 1555200 },
-		].filter(time => time.value <= fileMaxAge)
+		recommendedExpireTimes: [ // chaque valeur est en secondes
+			{ label: '30 minutes', inSeconds: 1800 },
+			{ label: '6 heures', inSeconds: 21600 },
+			{ label: '12 heures', inSeconds: 43200 },
+			{ label: '1 jour', inSeconds: 86400 },
+			{ label: '4 jours', inSeconds: 345600 },
+			{ label: '1 semaine', inSeconds: 604800 },
+			{ label: '2 semaines', inSeconds: 1209600 },
+			{ label: '1 mois', inSeconds: 2592000 },
+			{ label: '3 mois', inSeconds: 7776000 },
+			{ label: '6 mois', inSeconds: 15552000 },
+			{ label: '1 an', inSeconds: 31104000 },
+			{ label: '3 ans', inSeconds: 93312000 },
+			{ label: '10 ans', inSeconds: 311040000 },
+		].filter(time => time.inSeconds <= fileMaxAge).map(time => ({ label: time.label, inSeconds: time.inSeconds, value: Math.floor(time.inSeconds / 60) }))
 	}
 })
 
@@ -340,11 +355,12 @@ fastify.put('/files/uploadChunk', async (req, res) => {
 	var reqFile = await req.file({ limits: { fileSize: file.chunks[chunkPos].size } })
 	var chunkPath = path.join(storagePath, transferKey, 'file')
 	var chunkStart = chunkPos * chunkSize
-
+	
 	// Écrire le chunk
 	var stream = fs.createWriteStream(chunkPath, { flags: 'a', start: chunkStart })
+	if(!reqFile?.file) throw { statusCode: 400, error: "Chunk manquant", message: "Vous devez envoyer le chunk dans le body" }
 	await new Promise((resolve, reject) => {
-		pump(reqFile.file, stream, (err) => {
+		pump(reqFile?.file, stream, (err) => {
 			// Si il y a une erreur, on la renvoie
 			if(err){
 				console.error(err)
