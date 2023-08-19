@@ -10,6 +10,10 @@ Ce repo GitHub contient le code source de l'API de Stend, permettant d'héberger
 
 Pour plus d'informations, vous pouvez lire [la documentation](https://stend-docs.johanstick.me/).
 
+### Disclaimer sur l'utilisation de Stend
+
+L'utilisation de Stend pour des activités illégales n'est pas soutenue par le créateur et celui-ci ne peut être tenu responsable des problèmes matériels, logiciels ou légaux liés à ces utilisations non prévues. Utilisez à vos propres risques et prenez les précautions nécessaires, comme l'ajout d'un mot de passe obligatoire pour envoyer un fichier sur la plateforme.
+
 ### Licence
 
 MIT © [Johan](https://johanstick.me)
