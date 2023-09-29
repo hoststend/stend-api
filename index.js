@@ -543,7 +543,7 @@ fastify.get('/files/download', async (req, res) => {
 	console.log(`A user is downloading a file.. (shareKey: ${shareKey})`)
 	var fileSize = fs.statSync(path.join(storagePath, dbInfo.transferKey, 'file')).size
 	var stream = fs.createReadStream(path.join(storagePath, dbInfo.transferKey, 'file'))
-	res.header('Content-Disposition', `attachment; filename=${dbInfo.fileName}`)
+	res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(dbInfo.fileName)}`)
 	res.header('Content-Length', fileSize)
 	return res.send(stream).type('application/octet-stream').code(200)
 })
