@@ -412,7 +412,7 @@ fastify.post('/files/merge', async (req, res) => {
 	shareKeys = shareKeys.toLowerCase()
 	shareKeys = shareKeys.split(',') // on sépare les clés de partage
 	if(shareKeys.length < 2) throw { statusCode: 400, error: "Clés de partage insuffisantes", message: "Vous devez entrer au moins deux clés de partage" }
-	if(shareKeys.length > 10) throw { statusCode: 400, error: "Clés de partage trop nombreuses", message: "Vous ne pouvez pas entrer plus de 10 clés de partage" }
+	if(shareKeys.length > 50) throw { statusCode: 400, error: "Clés de partage trop nombreuses", message: "Vous ne pouvez pas entrer plus de 50 clés de partage" }
 
 	// Obtenir la clé de partage finale
 	var mergedShareKey
