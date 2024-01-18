@@ -16,7 +16,7 @@ var fileMaxSize = parseInt(process.env.FILE_MAX_SIZE || 1000000000) // 1 Go
 var chunkSize = parseInt(process.env.CHUNK_SIZE || 10000000) // 10 Mo
 var apiPassword = process.env.API_PASSWORD || null // Mot de passe pour accéder à l'API
 var apiVersion = require('./package.json').version || '0.0.0' // Version de l'API
-var fileMaxAge = process.env.FILE_MAX_AGE || 2592000 // 30 jours
+var fileMaxAge = process.env.FILE_MAX_AGE == 0 ? 1.577e+10 : parseInt(process.env.FILE_MAX_AGE) || 2592000 // 30 jours
 
 // Créer les éléments de stockage s'ils n'existent pas
 if(!fs.existsSync(storagePath)) fs.mkdirSync(storagePath)
@@ -208,9 +208,7 @@ fastify.get('/instance', async (req, res) => {
 			{ label: '1 mois', inSeconds: 2592000 },
 			{ label: '3 mois', inSeconds: 7776000 },
 			{ label: '6 mois', inSeconds: 15552000 },
-			{ label: '1 an', inSeconds: 31104000 },
-			{ label: '3 ans', inSeconds: 93312000 },
-			{ label: '10 ans', inSeconds: 311040000 },
+			{ label: 'Infini', inSeconds: 1.577e+10 },
 		].filter(time => time.inSeconds <= fileMaxAge).map(time => ({ label: time.label, inSeconds: time.inSeconds, value: Math.floor(time.inSeconds / 60) }))
 	}
 })
