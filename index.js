@@ -217,6 +217,9 @@ fastify.get('/instance', async (req, res) => {
 
 // Vérifier si le mot de passe est correct
 fastify.post('/checkPassword', async (req, res) => {
+	// Faire attendre volontairement l'utilisateur pour éviter les attaques bruteforce
+	await new Promise(resolve => setTimeout(resolve, 300))
+
 	// Si on a pas besoin de mot de passe
 	if(!apiPassword) throw { statusCode: 400, error: "Mot de passe non requis", message: "Cette instance n'a pas besoin de mot de passe" }
 
@@ -233,6 +236,9 @@ fastify.post('/checkPassword', async (req, res) => {
 
 // Créer un fichier
 fastify.post('/files/create', async (req, res) => {
+	// Faire attendre volontairement l'utilisateur pour éviter les attaques bruteforce
+	await new Promise(resolve => setTimeout(resolve, 200))
+
 	// Vérifier le mot de passe
 	if(apiPassword && req.headers.authorization != apiPassword) throw { statusCode: 401, error: "Mot de passe invalide", message: "Le mot de passe est invalide" }
 
@@ -401,6 +407,9 @@ fastify.put('/files/uploadChunk', async (req, res) => {
 
 // Regrouper plusieurs transferts en un
 fastify.post('/files/merge', async (req, res) => {
+	// Faire attendre volontairement l'utilisateur pour éviter les attaques bruteforce
+	await new Promise(resolve => setTimeout(resolve, 200))
+
 	// Vérifier le mot de passe
 	if(apiPassword && req.headers.authorization != apiPassword) throw { statusCode: 401, error: "Mot de passe invalide", message: "Le mot de passe est invalide" }
 
