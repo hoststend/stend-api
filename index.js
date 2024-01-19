@@ -17,6 +17,7 @@ var chunkSize = parseInt(process.env.CHUNK_SIZE || 10000000) // 10 Mo
 var apiPassword = process.env.API_PASSWORD || null // Mot de passe pour accéder à l'API
 var apiVersion = require('./package.json').version || '0.0.0' // Version de l'API
 var fileMaxAge = process.env.FILE_MAX_AGE == 0 ? 1.577e+10 : parseInt(process.env.FILE_MAX_AGE) || 2592000 // 30 jours
+var maxTransfersInMerge = 50 // Nombre maximum de transferts dans un groupe de transferts
 
 // Créer les éléments de stockage s'ils n'existent pas
 if(!fs.existsSync(storagePath)) fs.mkdirSync(storagePath)
@@ -192,11 +193,12 @@ fastify.get('/', async (req, res) => {
 // Obtenir les informations de l'instance
 fastify.get('/instance', async (req, res) => {
 	return {
-		fileMaxSize: fileMaxSize,
-		chunkSize: chunkSize,
+		fileMaxSize,
+		chunkSize,
 		requirePassword: apiPassword ? true : false,
-		apiVersion: apiVersion,
-		fileMaxAge: fileMaxAge,
+		apiVersion,
+		fileMaxAge,
+		maxTransfersInMerge,
 		recommendedExpireTimes: [ // chaque valeur est en secondes
 			{ label: '30 minutes', inSeconds: 1800 },
 			{ label: '6 heures', inSeconds: 21600 },
@@ -410,7 +412,7 @@ fastify.post('/files/merge', async (req, res) => {
 	shareKeys = shareKeys.toLowerCase()
 	shareKeys = shareKeys.split(',') // on sépare les clés de partage
 	if(shareKeys.length < 2) throw { statusCode: 400, error: "Clés de partage insuffisantes", message: "Vous devez entrer au moins deux clés de partage" }
-	if(shareKeys.length > 50) throw { statusCode: 400, error: "Clés de partage trop nombreuses", message: "Vous ne pouvez pas entrer plus de 50 clés de partage" }
+	if(shareKeys.length > maxTransfersInMerge) throw { statusCode: 400, error: "Clés de partage trop nombreuses", message: `Vous ne pouvez pas entrer plus de ${maxTransfersInMerge} clés de partage` }
 
 	// Obtenir la clé de partage finale
 	var mergedShareKey
