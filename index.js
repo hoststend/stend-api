@@ -1,5 +1,5 @@
 // Importer quelques librairies
-const fastify = require('fastify')({ logger: { level: 'silent' }, trustProxy: process.env.USING_REVERSE_PROXY || false })
+const fastify = require('fastify')({ logger: { level: 'silent' }, trustProxy: process.env.USING_REVERSE_PROXY == 'true' })
 fastify.register(require('@fastify/formbody'))
 fastify.register(require('@fastify/cors'))
 fastify.register(require('@fastify/multipart'))
@@ -389,7 +389,7 @@ fastify.put('/files/uploadChunk', async (req, res) => {
 		file.deleteKey = generateCode(12)
 
 		// On obtient des infos sur celui qui a uploadé le fichier
-		var ip = req.ip
+		var ip = process.env.USING_REVERSE_PROXY == 'true' ? (req.headers['x-forwarded-for'] || req.headers['CF-Connecting-IP'] || req.ip) : req.ip
 		var userAgent = req.headers['user-agent']
 
 		// Modifier l'information dans la db
