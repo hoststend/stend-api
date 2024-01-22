@@ -10,6 +10,18 @@ Ce repo GitHub contient le code source de l'API de Stend, permettant d'héberger
 
 Pour plus d'informations, vous pouvez lire [la documentation](https://stend-docs.johanstick.fr/).
 
+### Gérer une instance en tant qu'administrateur
+
+Aucun endpoint de l'API ou tableau de bord n'a été implémenté pour gérer plus facilement une instance Stend. Dans un terminal, vous pouvez exécuter un script via la commande `npm run admin` pour gérer différents éléments de votre instance, tels que la suppression de transfert.
+
+Si vous n'avez pas la possibilité d'utiliser une interface dans votre terminal, vous pouvez directement entrer les arguments dans la commande :
+
+```bash
+node admin.js info <clé de partage> # Affiche les informations d'un transfert
+node admin.js delete <clé de partage> # Supprime un transfert, sans demander confirmation
+node admin.js storage # Affiche l'espace de stockage utilisé par les fichiers enregistrés
+```
+
 ### Disclaimer sur l'utilisation de Stend
 
 L'utilisation de Stend pour des activités illégales n'est pas soutenue par le créateur et celui-ci ne peut être tenu responsable des problèmes matériels, logiciels ou légaux liés à ces utilisations non prévues. Utilisez à vos propres risques et prenez les précautions nécessaires, comme l'ajout d'un mot de passe obligatoire pour envoyer un fichier sur la plateforme.
