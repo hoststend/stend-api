@@ -1,5 +1,5 @@
 // Importer quelques librairies
-const fastify = require('fastify')({ logger: { level: 'silent' } })
+const fastify = require('fastify')({ logger: { level: 'silent' }, trustProxy: process.env.USING_REVERSE_PROXY || false })
 fastify.register(require('@fastify/formbody'))
 fastify.register(require('@fastify/cors'))
 fastify.register(require('@fastify/multipart'))
@@ -388,12 +388,17 @@ fastify.put('/files/uploadChunk', async (req, res) => {
 		file.expireDate = Date.now() + (file.expireTime * 1000)
 		file.deleteKey = generateCode(12)
 
+		// On obtient des infos sur celui qui a uploadé le fichier
+		var ip = req.ip
+		var userAgent = req.headers['user-agent']
+
 		// Modifier l'information dans la db
 		database.set(file.shareKey, {
 			uploaded: file.uploaded,
 			transferKey: file.transferKey,
 			deleteKey: file.deleteKey,
-			fileName: file.fileName
+			fileName: file.fileName,
+			userAgent, ip
 		})
 		console.log(`Uploaded file (shareKey: ${file.shareKey}, transferKey: ${transferKey}): fileSize: ${file.fileSize} bytes (${file.chunks.length} chunks)`)
 	}
