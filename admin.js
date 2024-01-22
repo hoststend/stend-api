@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 // Importer quelques librairies
 const readline = require('readline')
 const fs = require('fs')
