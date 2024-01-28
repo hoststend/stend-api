@@ -44,6 +44,7 @@ function formatBytes(bytes, decimals = 2) {
 // Fonction pour afficher une date/temps plus proprement
 function formatDate(date){
 	if(typeof date == 'string' || typeof date == 'number') date = new Date(date)
+	if(!(date instanceof Date)) return 'N/A'
 	return date.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' })
 }
 
