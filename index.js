@@ -1,5 +1,12 @@
+// Configurer les variables d'env
+require('dotenv').config()
+
+// On listera quelques variables ici
+var downloadTokens = [] // Liste des tokens de téléchargement
+var reverseProxy = process.env.USING_REVERSE_PROXY == 'cloudflare' ? 'cloudflare' : process.env.USING_REVERSE_PROXY ? 'true' : false // Si on utilise un reverse proxy, on le précise ici
+
 // Importer quelques librairies
-const fastify = require('fastify')({ logger: { level: 'silent' }, trustProxy: process.env.USING_REVERSE_PROXY == 'true' })
+const fastify = require('fastify')({ logger: { level: 'info' }, trustProxy: reverseProxy ? true : false })
 fastify.register(require('@fastify/formbody'))
 fastify.register(require('@fastify/cors'))
 fastify.register(require('@fastify/multipart'))
@@ -8,7 +15,6 @@ const fs = require('fs')
 const path = require('path')
 const pump = require('pump')
 const JSONdb = require('simple-json-db')
-require('dotenv').config()
 
 // Importer quelques éléments depuis les variables d'environnement
 var storagePath = path.resolve(process.env.STORAGE_PATH || './storage') // Dossier d'enregistrement des fichiers
@@ -22,9 +28,6 @@ var maxTransfersInMerge = 50 // Nombre maximum de transferts dans un groupe de t
 // Créer les éléments de stockage s'ils n'existent pas
 if(!fs.existsSync(storagePath)) fs.mkdirSync(storagePath)
 const database = new JSONdb(path.join(storagePath, 'db.json'))
-
-// On listera quelques variables ici
-var downloadTokens = [] // Liste des tokens de téléchargement
 
 // Liste de tout les caractères qu'on utilisera pour générer le code, ainsi que les caractères qui les entourent
 const alphabet = [
@@ -361,7 +364,7 @@ fastify.put('/files/uploadChunk', async (req, res) => {
 	var reqFile = await req.file({ limits: { fileSize: file.chunks[chunkPos].size } })
 	var chunkPath = path.join(storagePath, transferKey, 'file')
 	var chunkStart = chunkPos * chunkSize
-	
+
 	// Écrire le chunk
 	var stream = fs.createWriteStream(chunkPath, { flags: 'a', start: chunkStart })
 	if(!reqFile?.file) throw { statusCode: 400, error: "Chunk manquant", message: "Vous devez envoyer le chunk dans le body" }
@@ -389,7 +392,7 @@ fastify.put('/files/uploadChunk', async (req, res) => {
 		file.deleteKey = generateCode(12)
 
 		// On obtient des infos sur celui qui a uploadé le fichier
-		var ip = process.env.USING_REVERSE_PROXY == 'true' ? (req.headers['x-forwarded-for'] || req.headers['CF-Connecting-IP'] || req.ip) : req.ip
+		var ip = reverseProxy == 'cloudflare' ? (req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip) : reverseProxy == 'true' ? (req.headers['x-forwarded-for'] || req.headers['cf-connecting-ip'] || req.ip) : req.ip
 		var userAgent = req.headers['user-agent']
 
 		// Modifier l'information dans la db
@@ -407,7 +410,8 @@ fastify.put('/files/uploadChunk', async (req, res) => {
 	fs.writeFileSync(path.join(storagePath, transferKey, 'file.json'), JSON.stringify(file))
 
 	// Retourner les informations
-	if(file.uploaded) return file
+	if(file.uploaded) res.status(200).send(file)
+	else return res.status(200).send()
 })
 
 // Regrouper plusieurs transferts en un
