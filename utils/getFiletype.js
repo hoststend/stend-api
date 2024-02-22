@@ -13,11 +13,11 @@ module.exports = function getFiletype(fileName){
 		case "license":
 		case "licence":
 			return "Licence";
-		case "Makefile":
+		case "makefile":
 			return "Instructions Make";
-		case "Qikfile":
+		case "qikfile":
 			return "Instructions Qik";
-		case "Pipfile":
+		case "pipfile":
 			return "Dépendances Python";
 		case "authors":
 			return "Liste des auteurs/contributeurs";
@@ -373,4 +373,7 @@ module.exports = function getFiletype(fileName){
 		case "ani":
 			return "Icône de curseur";
 	}
+
+	// Si on ne trouve pas de correspondance, on retourne null
+	return null
 }
