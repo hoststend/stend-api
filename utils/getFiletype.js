@@ -56,7 +56,7 @@ module.exports = function getFiletype(fileName){
 			return "Texte brut";
 		case "md":
 			return "Document Markdown";
-	
+
 		// Archives
 		case "zip":
 		case "rar":
@@ -64,7 +64,7 @@ module.exports = function getFiletype(fileName){
 		case "tar":
 		case "gz":
 			return "Archive compressée";
-	
+
 		// Multimédia
 		case "jpg":
 		case "jpeg":
@@ -86,7 +86,7 @@ module.exports = function getFiletype(fileName){
 		case "ogg":
 		case "m4a":
 			return "Enregistrement audio";
-	
+
 		// Icônes
 		case "icns":
 			return "Icône macOS";
@@ -94,7 +94,7 @@ module.exports = function getFiletype(fileName){
 			return "Icône Windows";
 		case "svg":
 			return "Image vectorielle";
-	
+
 		// Fichiers 3d
 		case "obj":
 		case "fbx":
@@ -102,19 +102,19 @@ module.exports = function getFiletype(fileName){
 		case "ply":
 		case "dae":
 			return "Modèle 3D";
-	
+
 		// Base de données
 		case "sqlite":
 		case "db":
 		case "db3":
 		case "sql":
 			return "Base de données";
-	
+
 		// Livres électroniques
 		case "epub":
 		case "mobi":
 			return "Livre électronique";
-	
+
 		// Applications et exécutables
 		case "exe":
 			return "Exécutable Windows";
@@ -123,8 +123,8 @@ module.exports = function getFiletype(fileName){
 		case "com":
 			return "Exécutable DOS";
 		case "bin":
-			return "Fichier binaire";
-	
+			return "Binaire";
+
 		// Installateurs et images disque
 		case "apk":
 		case "xapk":
@@ -159,7 +159,7 @@ module.exports = function getFiletype(fileName){
 		case "msix":
 		case "msi":
 			return "Installateur Windows";
-	
+
 		// Fichiers de configuration ou de données
 		case "json":
 		case "jsonc":
@@ -178,14 +178,14 @@ module.exports = function getFiletype(fileName){
 		case "config":
 		case "properties":
 			return "Format de configuration";
-	
+
 		// Langage de balisage
 		case "html":
 		case "htm":
 			return "Page Internet";
 		case "css":
 			return "Feuille de style";
-	
+
 		// Langages de programmation
 		case "js":
 		case "mjs":
@@ -239,13 +239,13 @@ module.exports = function getFiletype(fileName){
 			return "Script Perl";
 		case "ahk":
 			return "Script AutoHotkey";
-	
+
 		// Extensions de navigateur
 		case "crx":
 			return "Extension Chrome";
 		case "xpi":
 			return "Extension Firefox";
-	
+
 		// Raccourcis
 		case "url":
 			return "Raccourci Internet";
@@ -253,7 +253,19 @@ module.exports = function getFiletype(fileName){
 			return "Raccourci Windows";
 		case "desktop":
 			return "Raccourci Linux";
-	
+
+		// Kustom
+		case "kwgt":
+			return "Widget Kustom";
+		case "klwp":
+			return "Fond d'écran Kustom";
+		case "komp":
+			return "Pack de composants Kustom";
+		case "ksh":
+			return "Script Kustom";
+		case "klck":
+			return "Écran de verrouillage Kustom";
+
 		// ROMs de jeux vidéo
 		case "nes":
 		case "sfc":
@@ -271,20 +283,20 @@ module.exports = function getFiletype(fileName){
 		case "wad":
 		case "nsp":
 			return "ROM de jeu vidéo";
-	
+
 		// Fichiers de cache/temporaire
 		case "cache":
 		case "tmp":
 		case "temp":
 			return "Élément temporaire";
-	
+
 		// Police de caractères
 		case "ttf":
 		case "otf":
 		case "woff":
 		case "woff2":
 			return "Police de caractères";
-	
+
 		// Logiciels de création
 		case "psd":
 			return "Projet Photoshop";
@@ -314,7 +326,9 @@ module.exports = function getFiletype(fileName){
 			return "Projet GIMP";
 		case "logicx":
 			return "Projet Logic Pro";
-	
+		case "xcodeproj":
+			return "Projet Xcode";
+
 		// Dotfiles
 		case "env":
 			return "Variables d'environnement";
@@ -355,7 +369,7 @@ module.exports = function getFiletype(fileName){
 			return "Configuration de Zsh";
 		case "zsh_history":
 			return "Historique de Zsh";
-	
+
 		// Autres
 		case "torrent":
 		case "magnet":
@@ -372,6 +386,16 @@ module.exports = function getFiletype(fileName){
 		case "cur":
 		case "ani":
 			return "Icône de curseur";
+		case "vcard":
+		case "vcf":
+			return "Fiche de contact";
+		case "ics":
+			return "Calendrier iCalendar";
+		case "midi":
+			return "Instrument MIDI";
+		case "crt":
+		case "cert":
+			return "Certificat";
 	}
 
 	// Si on ne trouve pas de correspondance, on retourne null
