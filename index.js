@@ -333,7 +333,7 @@ fastify.put('/files/uploadChunk', async (req, res) => {
 		file.uploaded = true
 		file.uploadedAt = Date.now()
 		file.expireDate = Date.now() + (file.expireTime * 1000)
-		file.deleteKey = generateCode(12)
+		file.deleteKey = generateCode(16)
 
 		// On obtient des infos sur celui qui a uploadé le fichier
 		var ip = reverseProxy == 'cloudflare' ? (req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip) : reverseProxy == 'true' ? (req.headers['x-forwarded-for'] || req.headers['cf-connecting-ip'] || req.ip) : req.ip
@@ -516,9 +516,6 @@ fastify.get('/files/download', async (req, res) => {
 
 // Supprimer un transfert
 fastify.delete('/files/delete', async (req, res) => {
-	// Vérifier le mot de passe
-	if(apiPassword && req.headers.authorization != apiPassword) throw { statusCode: 401, error: "Mot de passe invalide", message: "Le mot de passe est invalide" }
-
 	// Obtenir la clé de partage et la clé de suppression
 	var shareKey = req.query?.sharekey
 	var deleteKey = req.query?.deletekey
