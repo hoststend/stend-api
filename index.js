@@ -27,7 +27,9 @@ var chunkSize = parseInt(process.env.CHUNK_SIZE || 10000000) // 10 Mo
 var apiPassword = process.env.API_PASSWORD || null // Mot de passe pour accéder à l'API
 var apiVersion = require('./package.json').version || '0.0.0' // Version de l'API
 var fileMaxAge = process.env.FILE_MAX_AGE == 0 ? 1.577e+10 : parseInt(process.env.FILE_MAX_AGE) || 2592000 // 30 jours
+var diskSpaceMargin = isNaN(parseInt(process.env.DISK_SPACE_MARGIN)) ? 1000000 : parseInt(process.env.DISK_SPACE_MARGIN) // 1 Mo
 var maxTransfersInMerge = 50 // Nombre maximum de transferts dans un groupe de transferts
+console.log(`Marge: ${diskSpaceMargin}`)
 
 // Créer les éléments de stockage s'ils n'existent pas
 if(!fs.existsSync(storagePath)) fs.mkdirSync(storagePath)
@@ -221,8 +223,8 @@ fastify.post('/files/create', async (req, res) => {
 	if(fileSize > fileMaxSize) throw { statusCode: 400, error: "Fichier trop volumineux", message: "Le fichier est trop volumineux" }
 	if(fileSize < 1) throw { statusCode: 400, error: "Fichier trop petit", message: "Le fichier est trop petit" }
 	var diskSpace = await checkDiskSpace(storagePath)
-	console.log(diskSpace.free, parseInt(fileSize) + 100000)
-	if(diskSpace.free < parseInt(fileSize) + 100000) throw { statusCode: 500, error: "Stockage insuffisant", message: "Il n'y a pas assez d'espace libre sur le serveur. Signalez ceci à l'administrateur de cette instance" }
+	console.log(`free space: ${diskSpace.free} | disk margin: ${diskSpaceMargin} | file size: ${fileSize} | file + margin: ${parseInt(fileSize) + diskSpaceMargin}`)
+	if(diskSpace.free < parseInt(fileSize) + diskSpaceMargin) throw { statusCode: 500, error: "Stockage insuffisant", message: "Il n'y a pas assez d'espace libre sur le serveur. Signalez ceci à l'administrateur de cette instance" }
 
 	// Générer une clé de transfert
 	var transferKey = generateCode(12)
