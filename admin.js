@@ -157,6 +157,7 @@ async function main(){
 		// On affiche le résultat
 		console.log(`\nStockage utilisé : ${formatBytes(transferts.reduce((a, b) => a + b.size, 0))} / ${formatBytes(diskSpace.free)} (${transferts.length} transferts)\n`)
 		console.log(transferts.map(t => `  • ${t.key} : ${formatBytes(t.size)}`).join('\n'))
+		console.log(transferts.length ? "(la clé indiquée est la \"clé de transfert\", celle-ci ne peut pas être utilisée pour accéder au fichier)" : '')
 	}
 	else if(action == 'exit'){
 		process.exit()
