@@ -134,7 +134,7 @@ setInterval(deleteExpiredTransfers, 60000) // On vérifie toutes les minutes
 
 // Rediriger vers la documentation
 fastify.get('/', async (req, res) => {
-	return res.redirect("https://stend-docs.vercel.app") // au cas où mon domaine expire 🤷
+	return res.redirect("https://stend-docs.vercel.app/api-docs/endpoints/intro") // au cas où mon domaine expire 🤷
 })
 
 // Obtenir les informations de l'instance

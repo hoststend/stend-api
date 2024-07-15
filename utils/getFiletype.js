@@ -85,7 +85,8 @@ module.exports = function getFiletype(fileName){
 		case "flac":
 		case "ogg":
 		case "m4a":
-			return "Enregistrement audio";
+		case "opus":
+			return "Audio";
 
 		// Icônes
 		case "icns":
