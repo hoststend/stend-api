@@ -6,9 +6,9 @@ Ce repo GitHub contient le code source de l'API de Stend, permettant d'héberger
 
 ![Accueil](https://stend-docs.johanstick.fr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdemo_homepage.90c32aac.png&w=1920&q=75)
 ![Téléchargement](https://stend-docs.johanstick.fr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdemo_downloadPage.5b317e36.png&w=1920&q=75)
-*implémentation de l'API dans le [client web](https://github.com/johan-perso/stend-web) de Stend*
+*illustration : [client web](https://github.com/hoststend/stend-web)*
 
-Pour plus d'informations, vous pouvez lire [la documentation](https://stend-docs.johanstick.fr/).
+Pour plus d'informations, vous pouvez lire [la documentation](https://stend.johanstick.fr/api-docs/intro).
 
 ### Gérer une instance en tant qu'administrateur
 
@@ -28,4 +28,4 @@ L'utilisation de Stend pour des activités illégales n'est pas soutenue par le 
 
 ### Licence
 
-MIT © [Johan](https://johanstick.fr)
+MIT © [Johan](https://johanstick.fr). Soutenez ce projet via [Ko-Fi](https://ko-fi.com/johan_stickman) ou [PayPal](https://paypal.me/moipastoii) si vous souhaitez m'aider 💙
