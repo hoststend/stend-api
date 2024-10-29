@@ -1,0 +1,48 @@
+services:
+  stend-api:
+    build:
+      context: .
+    image: stend-api
+    environment:
+      # Chemin où seront stockés les fichiers dans le container
+      STORAGE_PATH: /usr/src/app/stend_storage
+      # Taille d'un chunk en octets (par défaut: 20000000 / 20 Mo)
+      # Note: assurez-vous que votre configuration (nginx, apache, etc.) autorise les requêtes de cette taille
+      # Dans le cas contraire, une erreur 413 (Payload Too Large) sera retournée lors de requêtes d'un chunk complet à l'API
+      # https://stackoverflow.com/a/37916740/16155654
+      CHUNK_SIZE: 20000000
+      # Taille maximale autorisée pour un seul fichier en octets
+      FILE_MAX_SIZE: 5000000000
+      # Mot de passe pour envoyer un fichier dans le cas ou vous souhaitez faire un serveur privé (décommenter si souhaité)
+      #API_PASSWORD: password
+      # Durée maximale avant expiration d'un fichier en secondes (par défaut: 2592000 / 30 jours)
+      # Durées recommendées :
+      # 1800 = 30 minutes
+      # 21600 = 6 heures
+      # 43200 = 12 heures
+      # 86400 = 1 jour
+      # 345600 = 4 jours
+      # 604800 = 1 semaine
+      # 1209600 = 2 semaine
+      # 2592000 = 1 mois
+      # 7776000 = 3 mois
+      # 15552000 = 6 mois
+      # 0 = Ne jamais expirer
+      FILE_MAX_AGE: 2592000
+      # Port sur lequel l'API écoutera
+      PORT: 3000
+      # Le serveur est-il derrrière un reverse proxy ?
+      # Si true, l'API utilisera l'header X-Forwarded-For pour récupérer l'adresse IP du client
+      # Si "cloudflare", l'API utilisera l'header CF-Connecting-IP pour récupérer l'adresse IP du client
+      # Si false, l'API utilisera l'adresse IP du dernier client contacté
+      USING_REVERSE_PROXY: true
+      # Marge lors de la vérification de l'espace disponible sur le disque en octets (par défaut: 1000000 / 1 Mo)
+      # Si l'espace sur le disque est inférieur à la taille du fichier + cette marge, l'API refusera de stocker le fichier
+      DISK_SPACE_MARGIN: 1000000
+    ports:
+      - 3000:3000
+    volumes:
+      - stend_storage:/usr/src/app/stend_storage
+
+volumes:
+  stend_storage:
