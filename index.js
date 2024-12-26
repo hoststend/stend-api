@@ -211,7 +211,7 @@ fastify.post('/files/create', async (req, res) => {
 	if(!shareKey?.length) shareKey = generateShareKey() // si la clé est vide, on en génère une nouvelle
 	if(database.has(shareKey)) shareKey = generateShareKey() // si la clé existe déjà, on en génère une nouvelle
 
-	// Vérifier le temps d'expiration (doit être une durée en secondes, inférieur à 30 jours)
+	// Vérifier le temps d'expiration (doit être une durée en secondes, inférieur à fileMaxAge)
 	if(!expireTime) throw { statusCode: 400, error: "Temps avant expiration manquant", message: "Vous devez entrer la valeur 'expiretime' dans le body" }
 	expireTime = parseInt(expireTime)
 	if(isNaN(expireTime)) throw { statusCode: 400, error: "Temps avant expiration invalide", message: "Le temps avant expiration doit être un nombre" }
@@ -511,7 +511,7 @@ fastify.get('/files/download', async (req, res) => {
 	console.log(`A user is downloading a file.. (shareKey: ${shareKey})`)
 	var fileSize = fs.statSync(path.join(storagePath, dbInfo.transferKey, 'file')).size
 	var stream = fs.createReadStream(path.join(storagePath, dbInfo.transferKey, 'file'))
-	res.header('Content-Disposition', `attachment; filename=${encodeURIComponent(dbInfo.fileName)}`)
+	res.header('Content-Disposition', `attachment; filename=${dbInfo.fileName}`)
 	res.header('Content-Length', fileSize)
 	return res.send(stream).type('application/octet-stream').code(200)
 })
