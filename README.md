@@ -4,8 +4,7 @@ Stend est un projet visant à être l'une des meilleures solutions pour configur
 
 Ce repo GitHub contient le code source de l'API de Stend, permettant d'héberger une instance du service.
 
-![Accueil](https://stend-docs.johanstick.fr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdemo_homepage.90c32aac.png&w=1920&q=75)
-![Téléchargement](https://stend-docs.johanstick.fr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Fdemo_downloadPage.5b317e36.png&w=1920&q=75)
+![Accueil](https://r2.johanstick.fr/illustrationsdevs/stend/stend_web_homedemo.png)
 *illustration : [client web](https://github.com/hoststend/stend-web)*
 
 Pour plus d'informations, vous pouvez lire [la documentation](https://stend.johanstick.fr/api-docs/intro).
