@@ -1,7 +1,7 @@
 {
 	"private": true,
 	"name": "stend-api",
-	"version": "2.2.2",
+	"version": "2.2.3",
 	"description": "Télécharger et envoyer des fichiers via Stend",
 	"main": "index.js",
 	"scripts": {
