@@ -23,7 +23,7 @@ var getFiletype = require('./utils/getFiletype')
 // Importer quelques éléments depuis les variables d'environnement
 var storagePath = path.resolve(process.env.STORAGE_PATH || './storage') // Dossier d'enregistrement des fichiers
 var fileMaxSize = parseInt(process.env.FILE_MAX_SIZE || 1000000000) // 1 Go
-var chunkSize = parseInt(process.env.CHUNK_SIZE || 10000000) // 10 Mo
+var chunkSize = parseInt(process.env.CHUNK_SIZE || 20000000) // 20 Mo
 var apiPassword = process.env.API_PASSWORD || null // Mot de passe pour accéder à l'API
 var apiVersion = require('./package.json').version || '0.0.0' // Version de l'API
 var fileMaxAge = process.env.FILE_MAX_AGE == 0 ? 1.577e+10 : parseInt(process.env.FILE_MAX_AGE) || 2592000 // 30 jours
